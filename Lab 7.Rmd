@@ -77,12 +77,14 @@ Use the function `httr::GET()` to make the following query:
     - retmax: 1000
 
 
-```{r papers-covid-hawaii, eval=FALSE}
+```{r papers-covid-hawaii, eval=TRUE}
 library(httr)
 query_ids <- GET(
-  url   = "BASELINE URL",
-  query = list("QUERY PARAMETERS")
-)
+  url   = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+  query = list(db = "pubmed",
+               term = "covid19 hawaii",
+               retmax = 1000)
+            )
 
 # Extracting the content of the response of GET
 ids <- httr::content(query_ids)
@@ -92,6 +94,7 @@ The query will return an XML object, we can turn it into a character list to
 analyze the text directly with `as.character()`. Another way of processing the
 data could be using lists with the function `xml2::as_list()`. We will skip the
 latter for now.
+
 
 Take a look at the data, and continue with the next question (don't forget to 
 commit and push your results to your GitHub repo!).
