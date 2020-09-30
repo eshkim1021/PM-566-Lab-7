@@ -129,11 +129,13 @@ before, we will need to coerce the contents (results) to a list using:
     
 **Pro-tip**: If you want `GET()` to take some element literal, wrap it around `I()` (as you would do in a formula in R). For example, the text `"123,456"` is replaced with `"123%2C456"`. If you don't want that behavior, you would need to do the following `I("123,456")`.
     
-```{r get-abstracts, eval = FALSE}
+```{r get-abstracts, eval = TRUE}
 publications <- GET(
-    url = "BASELINE URL HERE",
-    query = list(
-      "PARAMETERS OF THE QUERY"
+    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+    query = list( db = "pubmed",
+                  id = paste(ids,collapse = ","),
+                  retmx = 1000,
+                  rettype = "abstract"
         )
     )
 
@@ -153,10 +155,10 @@ Using the function `stringr::str_extract_all()` applied on `publications_txt`, c
 
 Write a regular expression that captures all such instances
 
-```{r univ-institute-regex, eval = FALSE}
+```{r univ-institute-regex, eval = TRUE}
 institution <- str_extract_all(
   publications_txt,
-  "[YOUR REGULAR EXPRESSION HERE]"
+  "University\\sof\\s[[:alpha:]]+|[[:alpha:]]+\\sInstitute\\sof\\s[[:alpha:]]+"
   ) 
 institution <- unlist(institution)
 table(institution)
@@ -169,11 +171,13 @@ Repeat the exercise and this time focus on schools and departments in the form o
 
 And tabulate the results
 
-```{r school-department, eval = FALSE}
+```{r school-department, eval = TRUE}
 schools_and_deps <- str_extract_all(
-  abstracts_txt,
-  "[YOUR REGULAR EXPRESSION HERE]"
+  publications_txt,
+  "School\\s+of\\s+[[:alpha:]]+|Department\\sof\\s[[:alpha:]]+"
   )
+
+unlist(schools_and_deps)
 table(schools_and_deps)
 ```
 
@@ -188,7 +192,7 @@ the XML a bit. We will use the `xml2::xml_children()` function to keep one eleme
 per id. This way, if a paper is missing the abstract, or something else, we will be able to properly match PUBMED IDS with their corresponding records.
 
 
-```{r one-string-per-response, eval = FALSE}
+```{r one-string-per-response, eval = TRUE}
 pub_char_list <- xml2::xml_children(publications)
 pub_char_list <- sapply(pub_char_list, as.character)
 ```
