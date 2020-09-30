@@ -21,6 +21,12 @@ will be using the `httr`, `xml2`, and `stringr` R packages.
 This markdown document should be rendered using `github_document`
 document.
 
+``` r
+library(httr)
+library(tidyverse)
+library(xml2)
+```
+
 ## Question 1: How many sars-cov-2 papers?
 
 Build an automatic counter of sars-cov-2 papers using PubMed. You will
@@ -33,17 +39,25 @@ Complete the lines of code:
 
 ``` r
 # Downloading the website
-website <- xml2::read_html("[URL]")
+website <- xml2::read_html("https://pubmed.ncbi.nlm.nih.gov/?term=sars-cov-2")
+
+#Alternative 
+alternative <- httr::GET(
+  url = "https://pubmed.ncbi.nlm.nih.gov/",
+  query = list(term = "sars-cov-2")
+)
 
 # Finding the counts
-counts <- xml2::xml_find_first(website, "[XPath]")
+counts <- xml2::xml_find_first(website, "/html/body/main/div[9]/div[2]/div[2]/div[1]/span")
 
 # Turning it into text
 counts <- as.character(counts)
 
 # Extracting the data using regex
-stringr::str_extract(counts, "[REGEX FOR NUMBERS WITH COMMAS/DOTS]")
+stringr::str_extract(counts, "[0-9,]+")
 ```
+
+    ## [1] "33,814"
 
 Don’t forget to commit your work\!
 
